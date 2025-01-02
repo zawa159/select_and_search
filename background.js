@@ -27,7 +27,7 @@ chrome.commands.onCommand.addListener((command) => {
                     } else if (response) {
                         console.log("[search_shortcut]content_scripts からのメッセージ:", response.text);
                         // 検索対象があれば検索
-                        if (response.text !== '' || response.text !== null) {
+                        if (response.text !== '' && response.text !== null) {
                             const searchUrl = createGoogleSearchUrl(response.text);
                             console.log("検索URL " + searchUrl);
                             // content_scripts に作成したURLを送信
