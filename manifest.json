@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "select_and_search",
+  "version": "1.0",
+  "description": "選択箇所を検索するショートカット",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ]
+    }
+  ],
+  "commands": {
+    "search_command": {
+      "suggested_key": {
+        "default": "Ctrl + Shift + E"
+      },
+      "description": "選択箇所を検索するショートカットボタン"
+    }
+  }
+}
