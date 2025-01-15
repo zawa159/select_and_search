@@ -17,11 +17,17 @@
     }
   ],
   "commands": {
-    "search_command": {
+    "Google_search_command": {
       "suggested_key": {
         "default": "Ctrl + Shift + E"
       },
-      "description": "選択箇所を検索するショートカットボタン"
+      "description": "Googleで選択箇所を検索するショートカットボタン"
+    },
+    "Deepl_search_command": {
+      "suggested_key": {
+        "default": "Ctrl + Q "
+      },
+      "description": "Deeplで選択箇所を翻訳するショートカットボタン"
     }
   }
 }

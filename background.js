@@ -9,33 +9,49 @@ function createGoogleSearchUrl(searchQuery) {
     return `${baseUrl}?${params.toString()}`;
 }
 
+// DeepL検索URL作成
+function createDeepLSearchUrl(searchQuery) {
+    const baseUrl = "https://www.deepl.com/ja/translator#en/ja/";
+    // クエリをエンコードしてURLに直接埋め込む
+    const encodedQuery = encodeURIComponent(searchQuery);
+    return `${baseUrl}${encodedQuery}`;
+}
+
 // ショートカットが押された時の処理
 chrome.commands.onCommand.addListener((command) => {
-    // コマンド確認
-    if (command === "search_command") {
-        // 現在アクティブなタブを取得
-        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-            const activeTab = tabs[0];
+    // 現在アクティブなタブを取得
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        var searchUrl = null; // 選択された文字変数の初期化
+        const activeTab = tabs[0]; // アクティブのタブを取得
 
-            // content_scripts に選択されたテキストを取得するメッセージを送信
-            chrome.tabs.sendMessage(
-                activeTab.id,
-                { action: "getSelectedText" },
-                (response) => {
-                    if (chrome.runtime.lastError) {
-                        console.error("[search_shortcut]content_scripts からのメッセージ受信失敗:", chrome.runtime.lastError.message);
-                    } else if (response) {
-                        console.log("[search_shortcut]content_scripts からのメッセージ:", response.text);
-                        // 検索対象があれば検索
-                        if (response.text !== '' && response.text !== null) {
-                            const searchUrl = createGoogleSearchUrl(response.text);
-                            console.log("検索URL " + searchUrl);
-                            // content_scripts に作成したURLを送信
-                            chrome.tabs.sendMessage(activeTab.id, { action: "openUrl", text: searchUrl });
+        // content_scripts に選択されたテキストを取得するメッセージを送信
+        chrome.tabs.sendMessage(
+            activeTab.id,
+            { action: "getSelectedText" },
+            (response) => {
+                if (chrome.runtime.lastError) {
+                    console.error("content_scripts からのメッセージ受信失敗:", chrome.runtime.lastError.message);
+                } else if (response) {
+                    console.log("content_scripts からのメッセージ:", response.text);
+                    // 検索対象があれば検索
+                    if (response.text !== '' && response.text !== null) {
+                        // コマンドから検索するサイトを指定
+                        switch (command) {
+                            case "Google_search_command":
+                                searchUrl = createGoogleSearchUrl(response.text);
+                                break;
+                            case "Deepl_search_command":
+                                searchUrl = createDeepLSearchUrl(response.text);
+                                break;
+                            default:
+                                console.log("検索なし");
                         }
+                        console.log("検索URL " + searchUrl);
+                        // content_scripts に作成したURLを送信
+                        chrome.tabs.sendMessage(activeTab.id, { action: "openUrl", text: searchUrl });
                     }
                 }
-            );
-        });
-    }
+            }
+        );
+    });
 });
